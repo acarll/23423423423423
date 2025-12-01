@@ -1,0 +1,27 @@
+import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, '.', '');
+    return {
+      server: {
+        port: 5173,
+        host: '0.0.0.0',
+        strictPort: false, // If 5173 is taken, try next available port
+      },
+      plugins: [react()],
+      define: {
+        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.TED_API_KEY': JSON.stringify(env.TED_API_KEY || '')
+      },
+      // Expose environment variables to the client (only VITE_ prefixed are safe)
+      envPrefix: 'VITE_',
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, '.'),
+        }
+      }
+    };
+});
